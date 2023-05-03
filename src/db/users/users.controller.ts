@@ -3,21 +3,22 @@ import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiTags } from "@nestjs/swagger";
-import { HelpersService } from "../helpers/helpers.service";
-import { UserEntity } from "../../entity/user.entity.";
+import { UserEntity } from "../../entity/user.entity";
 
-@ApiTags('user')
+@ApiTags('users')
+
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  // @ApiBody({ type: CreateUserDto })
   async create(
-    @Body() createUserDto: CreateUserDto): Promise<UserEntity> {
-    const password = await HelpersService.hashData(createUserDto.password)
+    @Body()
+      createUserDto: CreateUserDto
+  ): Promise<UserEntity> {
     return this.usersService.create({
       ...createUserDto,
-      password
     });
   }
 

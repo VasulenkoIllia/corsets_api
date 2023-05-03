@@ -3,6 +3,8 @@ import "reflect-metadata";
 import * as path from "path";
 
 dotenv.config()
+const entityPath = path.join(__dirname, "../dist", "entity", "*.entity.{js,ts}");
+const migrationPath = path.join(__dirname, "../dist", "migrations", "*.{js,ts}");
 
 export const AppDataSource  = {
     type: (process.env.DB_TYPE) as "mysql" | "mariadb",
@@ -13,9 +15,10 @@ export const AppDataSource  = {
     database: process.env.DB_DATABASE,
     synchronize: true,
     logging: false,
-    entities: [path.join(__dirname, "../", "entities", "*.entity.{js,ts}")],
-    migrations: [path.join(__dirname, "../", "migrations", "*.{js,ts}")],
+    entities: [entityPath],
+    migrations: [migrationPath],
     subscribers: [],
+
 }
 
 
