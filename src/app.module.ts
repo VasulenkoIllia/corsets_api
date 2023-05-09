@@ -7,6 +7,7 @@ import { AppDataSource } from "./data-source";
 import { UsersModule } from "./db/users/users.module";
 import { APP_GUARD } from "@nestjs/core";
 import { RolesGuard } from "./db/roles/roles.guard";
+import { AuthModule } from './db/auth/auth.module';
 
 
 @Module({
@@ -14,7 +15,8 @@ import { RolesGuard } from "./db/roles/roles.guard";
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(AppDataSource
   ),
-    UsersModule
+    UsersModule,
+    AuthModule,
 ],
   controllers: [AppController],
   providers: [
