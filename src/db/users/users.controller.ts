@@ -1,9 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiTags } from "@nestjs/swagger";
-import { UserEntity } from "../../entity/user.entity";
+import { CreateUserDto } from "./dto/create-user.dto";
 
 @ApiTags('users')
 
@@ -12,33 +11,40 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  // @ApiBody({ type: CreateUserDto })
-  async create(
-    @Body()
-      createUserDto: CreateUserDto
-  ): Promise<UserEntity> {
-    return this.usersService.create({
+  async createUser(
+  @Body() createUserDto: CreateUserDto): Promise<CreateUserDto> {
+    return this.usersService.createUser({
       ...createUserDto,
     });
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAllUser(): Promise<CreateUserDto[]> {
+    return this.usersService.findAllUser();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findOneUser(@Param('id') id: number): Promise<CreateUserDto> {
+    return this.usersService.findOneUser(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  async updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateUser(+id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async removeUser(@Param('id') id: string) {
+    return this.usersService.removeUser(+id);
+  }
+
+  @Get('login/:login')
+  async findOneUserByLogin(@Param('login') login: string): Promise<CreateUserDto> {
+    return this.usersService.findOneUserByLogin(login);
+  }
+
+  @Get('email/:email')
+  async findOneUserByEmail(@Param('email') email: string): Promise<CreateUserDto> {
+    return this.usersService.findOneUserByEmail(email);
   }
 }

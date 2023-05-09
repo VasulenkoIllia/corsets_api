@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { UserEntity } from "../../entity/user.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { CreateUserDto } from "./dto/create-user.dto";
 import { HelpersService } from "../helpers/helpers.service";
 
 @Injectable()
@@ -13,27 +13,60 @@ export class UsersService {
     private readonly userRepo: Repository<UserEntity>
   ) {
   }
-  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    const password:string = await HelpersService.hashData(createUserDto.password);
-      return this.userRepo.create({
-        ...createUserDto,
-        password
-      });
+  async createUser(createUserDto: CreateUserDto): Promise<CreateUserDto> {
+    const password: string = await HelpersService.hashData(createUserDto.password);
+    return this.userRepo.save({
+      ...createUserDto,
+      password
+    });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAllUser(): Promise<UserEntity[] | null> {
+    return this.userRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOneUser (id: number): Promise<UserEntity | null> {
+    const user = await this.userRepo.findOneBy({ id })
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`)
+    }
+    return this.userRepo.findOneBy({ id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOneUserByEmail (email: string): Promise<UserEntity | null> {
+    const user = await this.userRepo.findOneBy({ email })
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`)
+    }
+    return this.userRepo.findOneBy({ email });
+  }
+  async findOneUserByLogin (login: string): Promise<UserEntity | null> {
+    const user = await this.userRepo.findOneBy({ login })
+    if (!user) {
+      throw new NotFoundException(`User with login ${login} not found`)
+    }
+    return this.userRepo.findOneBy({ login });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<UpdateUserDto> {
+    const user = await this.userRepo.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+      await this.userRepo.update(id, updateUserDto);
+        return this.userRepo.findOneBy({ id } );
+
+  }
+
+  async removeUser(id: number) {
+    const user = await this.userRepo.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    const result = await this.userRepo.delete(id);
+    return {
+      success: result.affected > 0,
+    }
   }
 }
+
