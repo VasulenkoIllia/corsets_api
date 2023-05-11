@@ -20,6 +20,7 @@ export class UserEntity {
         type: 'enum',
         enum: RoleEnum,
         default: RoleEnum.User,
+        array: true,
     })
     roles: RoleEnum[];
 

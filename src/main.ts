@@ -10,7 +10,17 @@ async function bootstrap() {
     .setDescription('Corsets_API')
     .setVersion('1')
     .addTag('API')
+    .addBearerAuth(
+      {
+        description: 'Default JWT Authorization',
+        type: 'http',
+        in: 'header',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      )
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document,{
     explorer: true});

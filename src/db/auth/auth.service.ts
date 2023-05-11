@@ -3,6 +3,7 @@ import { UsersService } from "../users/users.service";
 import { HelpersService } from "../helpers/helpers.service";
 import { UserEntity } from "../../entity/user.entity";
 import { JwtService } from "@nestjs/jwt";
+import { SignInDto } from "./dto/sign-in.dto";
 
 @Injectable()
 export class AuthService {
@@ -13,8 +14,7 @@ export class AuthService {
   async validateUser(login: string, pass: string): Promise<any> {
     const user:UserEntity = await this.usersService.findOneUserByLogin(login);
     if (user && await HelpersService.checkHashData(pass, user.password )) {
-      const payload = { login: user.login, sub: user.id, roles: user.roles };
-      return  await this.jwtService.signAsync(payload);
+      return user;
     }
     else {
       throw new NotFoundException(`Login ${login} and password ${pass} wrong`);
@@ -22,7 +22,8 @@ export class AuthService {
 
   }
     
-  async signIn(user: any)  {
+  async signIn(signInDto: SignInDto): Promise<any> {
+    const user = await this.validateUser(signInDto.login, signInDto.password)
     const payload = { login: user.login, sub: user.id, roles: user.roles };
     return {
       access_token: await this.jwtService.signAsync(payload),
