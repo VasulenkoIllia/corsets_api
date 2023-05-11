@@ -8,8 +8,8 @@ export class HelpersService {
     const salt = await bcrypt.genSalt();
     return bcrypt.hash(data, salt)
   }
-  static checkHashData(hash, data): Promise<boolean>{
-    return bcrypt.compare(data, hash)
+  static checkHashData(data, hash ): Promise<boolean>{
+    return bcrypt.compare(data, hash )
   }
   static async checkTransmittedData(repository, id): Promise<any>{
     const data = await repository.findOne(id);
